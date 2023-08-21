@@ -65,21 +65,33 @@ file_types_graduate = ["개인", "신분증", "통장", "청렴서약", "건강"
 file_types_output = ["개인정보수집이용제공 동의서", "신분증, 통장 사본", "청렴서약서", "건강보험자격득실확인서"]
 
 print(
-    f"이 프로그램은 학부생/대학원생의 심화R&D 인건비 지급서류들('신분증 사본', '통장 사본' 등)을 주어진 엑셀 파일의 학생 이름 순서에 따라"
+    f"이 프로그램은 학부생/대학원생의 인건비 지급서류들('신분증 사본', '통장 사본' 등)을 주어진 엑셀 파일의 학생 이름 순서에 따라"
     " 각 서류별로 하나의 pdf로 합쳐 만들어주는 프로그램입니다. (학부생/대학원생 구분) ex) 신분증, 통장사본-학부생.pdf, 개인정보동의서-학부생.pdf\n"
-    "학생들의 정보가 담긴 엑셀 파일명을 절대경로로 입력하세요. 확장자 포함해야합니다. 학부생 sheet가 1번, 대학원생 sheet가 2번 시트여야합니다. ex) c:/user/심화 R&D 엑셀.xlsx\n절대 경로를 포함한 파일명 : ",
+    "학생들의 정보가 담긴 엑셀 파일이 있는 폴더의 경로명을 입력해주세요. ex) c:/user/심화 R&D :",
     end="",
 )
 # 정보를 읽어들일 엑셀파일의 이름 입력
-excel_file_name = input()
+xlsx_file_path = input()
+
+xlsx_files=[]
+
+for file in os.listdir(xlsx_file_path): #폴더 내에서 xlsx 엑셀 파일 탐색
+    if file.endswith(".xlsx"):
+        xlsx_files.append(file)
+
+for (i, xlsx_file) in enumerate(xlsx_files, 1): #xlsx 파일명 출력 및 참조할 xlsx 파일 입력받음
+    print(str(i)+". "+ xlsx_file)
+xlsx_file_num=int(input("위 파일들 중 참조하고자 하는 xlsx 파일 번호를 입력하세요 : "))
+xlsx_file_path+="/"+xlsx_files[xlsx_file_num-1]
+
 
 #파일을 병합할 때 기준이 되는 열 입력
 print("파일 병합 기준이 되는 열의 이름을 입력하세요. 그 열의 데이터 순서대로 파일이 병합됩니다. ex)이름, 학번 : ",  end="")
 column_name=input()
 
 # 학부생/대학원생의 엑셀 파일 읽기
-df_undergraduate = pd.read_excel(excel_file_name, sheet_name=0, header=None)
-df_graduate = pd.read_excel(excel_file_name, sheet_name=1, header=None)
+df_undergraduate = pd.read_excel(xlsx_file_path, sheet_name=0, header=None)
+df_graduate = pd.read_excel(xlsx_file_path, sheet_name=1, header=None)
 
 # '이름'이라는 글자를 포함한 열 찾기
 undergraduate_std_num = get_data_from_excel_column(df_undergraduate, column_name)
@@ -92,7 +104,7 @@ print("프로그램이 실행돼야하는 폴더의 경로를 절대경로로 �
 abs_practice_folder_path = input()
 
 print(
-    "파일이 저장될 폴더의 절대 경로를 입력하세요. 프로그램 실행 위치와 동일하다면 바로 엔터키를 눌러주세요.폴더가 자동 생성되지 않으니 폴더를 생성하고 경로를 입력해주세요 ex)c:/user/산학R&D/7월 \n 폴더 절대경로 :",
+    "파일이 저장될 폴더의 절대 경로를 입력하세요. 프로그램 실행 위치와 동일하다면 바로 엔터키를 눌러주세요.폴더가 자동 생성되지 않으니 폴더를 생성하고 경로를 입력해주세요 ex)c:/user/산학R&D/7월 \n폴더 절대경로 :",
     end="",
 )
 

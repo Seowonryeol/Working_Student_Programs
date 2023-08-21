@@ -2,6 +2,7 @@ from __future__ import print_function
 import pickle
 import os.path
 from googleapiclient.discovery import build
+import urllib.parse
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.http import MediaIoBaseDownload
@@ -25,7 +26,8 @@ def download_file(service,file_name, file_id, modified_time, folder_path): #파�
     global downloaded_files_cnt
     global downloaded_failed_files_cnt
     request = service.files().get_media(fileId=file_id)
-    file_path=os.path.join(folder_path, file_name)
+    decoded_file_name = urllib.parse.unquote(file_name)
+    file_path=os.path.join(folder_path, decoded_file_name)
     try: #파일 다운로드 시도
         fh = io.FileIO(file_path, 'wb')
         downloader = MediaIoBaseDownload(fh, request)
@@ -40,7 +42,7 @@ def download_file(service,file_name, file_id, modified_time, folder_path): #파�
         status, done = downloader.next_chunk()
         downloaded_files_cnt+=1
         process_rate=((downloaded_files_cnt/files_cnt)*100).__round__(1)
-        print(f"다운로드 진행률 ({downloaded_files_cnt}/{files_cnt}%%, {process_rate}) : {int(status.progress() * 100)}%")   
+        print(f"다운로드 진행률 ({downloaded_files_cnt}/{files_cnt}, {process_rate}%) : {int(status.progress() * 100)}%")   
 
     modified_time = datetime.strptime(modified_time, "%Y-%m-%dT%H:%M:%S.%fZ") #구글 드라이브에서 가져온 시간을 로컬에 맞게 변환한 후 파일에 적용
     utc_timezone = pytz.timezone('UTC')

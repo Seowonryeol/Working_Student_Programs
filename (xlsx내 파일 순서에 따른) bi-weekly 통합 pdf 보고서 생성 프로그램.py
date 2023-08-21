@@ -115,7 +115,7 @@ students_num=get_data_from_excel_column(df_students, column_name) #엑셀 파일
 
 files=get_all_files_with_extension(abs_practice_folder_path,".pdf")
 
-print(xlsx_file_path, students_num, files)
+print(f'{len(files)}개의 파일이 검색되었습니다. 병합을 시작합니다.')
 
 merger = PdfMerger()
 cnt = 0
@@ -126,8 +126,9 @@ for student_num in students_num:
             merger.append(os.path.join(abs_practice_folder_path, file))
             print(file_basename + " 병합 완료")
             cnt += 1
-merger.write(os.path.join(abs_practice_folder_path, f"(산학협력프로젝트 Bi-weekly 보고서 제출 현황.xlsx에 따른) {month}월 bi-weekly 보고서 통합본.pdf"))
-print(f"총 {cnt}개의 파일, (산학협력프로젝트 Bi-weekly 보고서 제출 현황.xlsx에 따른) %d월 bi-weekly 보고서 통합본.pdf 생성 완료\n")
+file_class=abs_practice_folder_path.split("\\")[-2]
+merger.write(os.path.join(abs_practice_folder_path, f"(산학협력프로젝트 {file_class} Bi-weekly 보고서 제출 현황.xlsx에 따른) {month}월 {file_class} bi-weekly 보고서 통합본.pdf"))
+print(f"총 {cnt}개의 파일, (산학협력프로젝트 {file_class} Bi-weekly 보고서 제출 현황.xlsx에 따른) {month}월 {file_class} bi-weekly 보고서 통합본.pdf 생성 완료\n")
 merger.close()
 
 input("프로그램을 종료하려면 아무 키나 누르세요")
